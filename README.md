@@ -253,7 +253,11 @@
 
 ## 模型部署
 
-模型的部署和使用请参考 [src/cli_demo.py](src)
+### 旧部署方式
+模型的部署和使用请参考 [部署](https://github.com/irlab-sdu/fuzi.mingcha/tree/main/src)
+### 新部署方式
+[新部署方式](Deploy.MD)
+
 
 
 ## 致谢

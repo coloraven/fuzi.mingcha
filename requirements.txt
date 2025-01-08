@@ -13,3 +13,6 @@ matplotlib
 protobuf
 cpm-kernels
 elasticsearch
+numpy==1.26.4
+meilisearch
+modelscope

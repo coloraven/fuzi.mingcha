@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import csv
+import os
 
 from meilisearch import Client
 from tqdm import trange
@@ -32,15 +33,21 @@ def load_data(file_path):
     return data
 
 
-def build_index(index_name, data):
+def build_index(index_name, data, force=False):
     """检查索引是否存在，若不存在则创建并导入数据"""
     try:
         r = client.get_index(index_name)
+        if force:
+            # 删除该索引
+            print(f"强制模式启用，删除索引 {index_name}。")
+            client.delete_index(index_name)
+            r = None  # 删除后，索引不再存在
         if r:
             print(f"索引 {index_name} 已存在，跳过创建和导入。")
             return
-    except:
-        print(f"索引 {index_name} 不存在，准备导入。")
+    except Exception as e:
+        print(f"索引 {index_name} 不存在或无法获取，准备创建索引。错误: {e}")
+
     print(f"导入数据到索引: {index_name}")
     # 创建索引并配置
     index = client.index(index_name)
@@ -56,13 +63,18 @@ def build_index(index_name, data):
 
 
 if __name__ == "__main__":
-    # 任务1数据导入
+    # 从环境变量中读取 forceupdate 的值
+    force_env = os.getenv("FORCEUPDATE", "false")
 
+    # 将force_env参数转换为布尔值
+    force_flag = force_env in ["1", "True", "true"]
+
+    # 任务1数据导入
     data_task1 = load_data(file_fatiao)
-    build_index(index_fatiao, data_task1)
+    build_index(index_fatiao, data_task1, force=force_flag)
 
     # 任务2数据导入
     data_task2 = load_data(file_anli)
-    build_index(index_anli, data_task2)
+    build_index(index_anli, data_task2, force=force_flag)
 
     print("所有数据导入完成！")
